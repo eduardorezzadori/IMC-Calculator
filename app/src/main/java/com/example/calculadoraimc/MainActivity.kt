@@ -28,7 +28,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Gray
 import androidx.compose.ui.graphics.Color.Companion.LightGray
-import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.calculadoraimc.ui.theme.CalculadoraIMCTheme
@@ -83,10 +82,10 @@ fun Home() {
             TextField(
                 value = weightTextValue,
                 onValueChange = { newText ->
-                    weightTextValue = newText
+                    weightTextValue = newText.replace(",", ".")
                 },
                 label = {
-                    Text("Digite seu peso:")
+                    Text("Digite seu peso (kg):")
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -107,9 +106,9 @@ fun Home() {
             TextField(
                 value = heightTextValue,
                 onValueChange = { newText ->
-                    heightTextValue = newText
+                    heightTextValue = newText.replace(",", ".")
                 },
-                label = { Text("Digite sua altura:") },
+                label = { Text("Digite sua altura (m):") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
