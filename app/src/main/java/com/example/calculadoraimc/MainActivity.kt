@@ -20,6 +20,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,7 +32,7 @@ import androidx.compose.ui.graphics.Color.Companion.LightGray
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.calculadoraimc.ui.theme.CalculadoraIMCTheme
-import kotlin.math.pow
+import com.example.calculadoraimc.viewmodel.IMCViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,11 +50,6 @@ fun Home() {
 
     var weightTextValue by remember { mutableStateOf("") }
     var heightTextValue by remember { mutableStateOf("") }
-
-    var levelImcStringValue by remember { mutableStateOf("") }
-
-    var imcStringValue by remember { mutableStateOf("") }
-    var imc = 0F
 
     Scaffold(
         topBar = {
@@ -78,6 +74,9 @@ fun Home() {
                 .fillMaxSize()
                 .background(LightGray)
         ) {
+            val viewModel by remember { mutableStateOf(IMCViewModel()) }
+            val imcValue by viewModel.imc.collectAsState()
+            val levelImcValue by viewModel.levelImc.collectAsState()
 
             TextField(
                 value = weightTextValue,
@@ -92,12 +91,12 @@ fun Home() {
                     .padding(16.dp),
                 colors = TextFieldDefaults.colors(
                     focusedTextColor = Color.DarkGray,
-                    unfocusedTextColor = Color.Gray,
-                    focusedContainerColor = Color.LightGray,
-                    unfocusedContainerColor = Color.LightGray,
+                    unfocusedTextColor = Gray,
+                    focusedContainerColor = LightGray,
+                    unfocusedContainerColor = LightGray,
                     cursorColor = Color.Black,
                     focusedIndicatorColor = Color.DarkGray,
-                    unfocusedIndicatorColor = Color.Gray,
+                    unfocusedIndicatorColor = Gray,
                     unfocusedLabelColor = Color.Black,
                     focusedLabelColor = Color.Black,
                 )
@@ -114,12 +113,12 @@ fun Home() {
                     .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
                 colors = TextFieldDefaults.colors(
                     focusedTextColor = Color.DarkGray,
-                    unfocusedTextColor = Color.Gray,
-                    focusedContainerColor = Color.LightGray,
-                    unfocusedContainerColor = Color.LightGray,
+                    unfocusedTextColor = Gray,
+                    focusedContainerColor = LightGray,
+                    unfocusedContainerColor = LightGray,
                     cursorColor = Color.Black,
                     focusedIndicatorColor = Color.DarkGray,
-                    unfocusedIndicatorColor = Color.Gray,
+                    unfocusedIndicatorColor = Gray,
                     unfocusedLabelColor = Color.Black,
                     focusedLabelColor = Color.Black,
                 )
@@ -127,9 +126,7 @@ fun Home() {
 
             Button(
                 onClick = {
-                    imc = imcCalc(weightTextValue.toFloat(), heightTextValue.toFloat())
-                    imcStringValue = imc.toString()
-                    levelImcStringValue = levelImc(imc)
+                    viewModel.calculateIMC(weightTextValue.toFloat(), heightTextValue.toFloat())
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -149,30 +146,15 @@ fun Home() {
             )
 
             Text(
-                text = "IMC: $imcStringValue",
+                text = "IMC: $imcValue",
                 modifier = Modifier.padding(start = 32.dp)
             )
 
             Text(
-                text = "Classificação: $levelImcStringValue",
+                text = "Classificação: $levelImcValue",
                 modifier = Modifier.padding(start = 32.dp)
             )
         }
-    }
-}
-
-fun imcCalc(p: Float, a: Float): Float {
-    val imc: Float = p / (a.pow(2))
-    return imc
-}
-
-fun levelImc(imc: Float): String {
-    return when (imc) {
-        in 0.0..18.5 -> "Abaixo do peso"
-        in 18.6..24.9 -> "Peso normal"
-        in 25.0..29.9 -> "Sobrepeso"
-        in 30.0..39.9 -> "Obesidade"
-        else -> "Obesidade grave"
     }
 }
 
